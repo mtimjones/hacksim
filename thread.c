@@ -25,7 +25,7 @@ int load_function( thread_t *thread, entity_t entity,
    for ( i = 0 ; i < MAX_INSTRUCTIONS ; i++)
    {
       if ( i < num_instr ) thread->instructions[ i ] = instructions[ i ];
-      else                 thread->instructions[ i ] = INSTR( UNDEF, 0 );
+      else                 thread->instructions[ i ] = INSTR_FMT1( UNDEF );
    }
 
    return 0;
@@ -81,14 +81,16 @@ thread_t *thread_create( void )
 
 int interp( thread_t *thread )
 {
-   unsigned char opcode;
-   char operand;
+   opcodes_t opcode;
+   char operand1;
+   char operand2;
    int  next = 1;
 
    assert( thread );
 
    opcode = GET_OPCODE( thread->instructions[ thread->registers.pc ] );
-   operand = (char)GET_OPERAND( thread->instructions[ thread->registers.pc ] );
+   operand1 = (char)GET_OPERAND1( thread->instructions[ thread->registers.pc ] );
+   operand2 = (char)GET_OPERAND2( thread->instructions[ thread->registers.pc ] );
 
 printf("opcode = %x\n", opcode);
 
@@ -120,29 +122,28 @@ printf("opcode = %x\n", opcode);
          }
          break;
       case JUMP:
-printf("operand = %d\n", operand);
-         thread->registers.pc = operand;
+         thread->registers.pc = operand1;
          next = 0;
          break;
       case BXNE:
-         if ( thread->registers.x == operand )
+         if ( thread->registers.x == operand1 )
          {
             thread->registers.pc++;
          }
          else
          {
-            thread->registers.pc += operand;
+            thread->registers.pc = operand2;
          }
          next = 0;
          break;
       case BYNE:
-         if ( thread->registers.y == operand )
+         if ( thread->registers.y == operand1 )
          {
             thread->registers.pc++;
          }
          else
          {
-            thread->registers.pc += operand;
+            thread->registers.pc = operand2;
          }
          next = 0;
          break;
