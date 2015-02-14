@@ -36,6 +36,7 @@ typedef enum {
    Goal,
    Trap,
    Data,
+   Virus,
 } entity_t;
 
 typedef int ( *load_func_t )( thread_t *thread, entity_t entity, 
@@ -75,6 +76,6 @@ struct thread_s {
 
 
 thread_t *thread_create( void );
-
+void      thread_destroy( thread_t * );
 
 
