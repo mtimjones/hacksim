@@ -100,6 +100,16 @@ thread_t *thread_create( void )
 }
 
 
+void thread_destroy( thread_t *thread )
+{
+   assert( thread );
+
+   free( thread );
+
+   return;
+}
+
+
 int interp( thread_t *thread )
 {
    opcodes_t opcode;
