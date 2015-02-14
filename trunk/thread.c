@@ -66,6 +66,25 @@ int step_function( thread_t *thread )
 }
 
 
+void get_pos_function( thread_t *thread, int *x, int *y )
+{
+   assert( thread );
+
+   *x = thread->registers.x;
+   *y = thread->registers.y;
+
+   return;
+}
+
+
+int get_err_function( thread_t *thread )
+{
+   assert( thread );
+
+   return( thread->registers.err );
+}
+
+
 thread_t *thread_create( void )
 {
    thread_t *new_thread;
@@ -74,6 +93,8 @@ thread_t *thread_create( void )
 
    new_thread->load = load_function;
    new_thread->step = step_function;
+   new_thread->get_pos = get_pos_function;
+   new_thread->get_err = get_err_function;
 
    return new_thread;
 }
@@ -91,8 +112,6 @@ int interp( thread_t *thread )
    opcode = GET_OPCODE( thread->instructions[ thread->registers.pc ] );
    operand1 = (char)GET_OPERAND1( thread->instructions[ thread->registers.pc ] );
    operand2 = (char)GET_OPERAND2( thread->instructions[ thread->registers.pc ] );
-
-printf("opcode = %x\n", opcode);
 
    // Interpret the instruction
    switch( opcode )
