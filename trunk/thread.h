@@ -32,11 +32,11 @@ typedef unsigned int instruction_t;
                                      ( op1 << 8 ) | ( op2 ) )
 
 typedef enum {
-   Avatar = 0,
-   Goal,
-   Trap,
-   Data,
-   Virus,
+   Avatar = 65,
+   Goal = 71,
+   Trap = 84,
+   Data = 68,
+   Virus = 86,
 } entity_t;
 
 typedef int ( *load_func_t )( thread_t *thread, entity_t entity, 

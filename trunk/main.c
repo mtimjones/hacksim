@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "thread.h"
 
-#define MAX_ENTITIES	2
+#define MAX_ENTITIES	3
 
 int main ( int argc, char *argv[] )
 {
@@ -21,11 +21,18 @@ int main ( int argc, char *argv[] )
                               INSTR_FMT1( DECY ), INSTR_FMT1( DECY ),
                               INSTR_FMT2( JUMP, 0 ) };
 
+   instruction_t prog3[ ] = { INSTR_FMT2( JUMP, 0 ) };
+
+   extern void display_environment( thread_t **, int );
+
    entities[ 0 ] = thread_create( );
    entities[ 0 ]->load( entities[ 0 ], Avatar, prog2, sizeof( prog2 ), 0, 0 );
 
    entities[ 1 ] = thread_create( );
-   entities[ 1 ]->load( entities[ 1 ], Virus,  prog2, sizeof( prog2 ), 2, 2 );
+   entities[ 1 ]->load( entities[ 1 ], Virus,  prog2, sizeof( prog2 ), 5, 5 );
+
+   entities[ 2 ] = thread_create( );
+   entities[ 2 ]->load( entities[ 2 ], Goal,   prog3, sizeof( prog3 ), 9, 9 );
 
    for ( i = 0 ; i < 100 ; i++ )
    {
@@ -33,20 +40,24 @@ int main ( int argc, char *argv[] )
       for ( j = 0 ; j < MAX_ENTITIES ; j++ )
       {
    
-         printf("Entity %d -- PC: %4d, CYC: %6d, X: %4d, Y: %4d\n",
-                  entities[ j ]->entity,
-                  entities[ j ]->registers.pc, entities[ j ]->registers.cyc, 
-                  entities[ j ]->registers.x,  entities[ j ]->registers.y );
+//         printf("Entity %d -- PC: %4d, CYC: %6d, X: %4d, Y: %4d\n",
+//                  entities[ j ]->entity,
+//                  entities[ j ]->registers.pc, entities[ j ]->registers.cyc, 
+//                  entities[ j ]->registers.x,  entities[ j ]->registers.y );
 
          entities[ j ]->step( entities[ j ] );
 
       }
 
-//      display_environment( );
+      display_environment( entities, MAX_ENTITIES );
 
    }
 
-//   thread_destroy( avatar_thread );
+   for ( j = 0 ; j < MAX_ENTITIES ; j++ )
+   {
+      thread_destroy( entities[ j ] );
+   }
+
    return 0;
 }
 
