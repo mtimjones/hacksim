@@ -2,11 +2,16 @@
 
 #include <stdio.h>
 #include <curses.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 #define NLINES          32
 #define NCOLS           70
 
 static WINDOW *mainwin;
+static MEVENT event;
+int x=0, y=0;
+
 
 void win_startup( void )
 {
@@ -25,9 +30,7 @@ void win_startup( void )
    nodelay( mainwin, TRUE );
    keypad( mainwin, TRUE );
 
-   wborder( mainwin, 0, 0, 0, 0, 0, 0, 0, 0 );
-
-   wrefresh( mainwin );
+   mousemask( BUTTON1_CLICKED, NULL );
 
    return;
 }
@@ -39,6 +42,8 @@ void win_shutdown( void )
 
    endwin( );
 
+   mousemask( 0, NULL );
+
    return;
 }
 
@@ -46,6 +51,8 @@ void win_shutdown( void )
 void win_update( void )
 {
    int i;
+
+   wborder( mainwin, 0, 0, 0, 0, 0, 0, 0, 0 );
 
    // Update the window.
    mvwprintw( mainwin, 1, 1, "/Hack/Sim" );
@@ -62,23 +69,50 @@ void win_update( void )
       }
    }
 
+   mvwprintw( mainwin, 2, 20, "y%3d, x%3d", y, x );
+
    wrefresh( mainwin );
-   
+
    return;
+}
+
+
+int game_loop( void )
+{
+   int c;
+
+   while ( 1 )
+   {
+      c = wgetch( mainwin );
+
+      if ( c == KEY_MOUSE )
+      {
+         if ( getmouse( &event ) == OK )
+         {
+            if ( event.bstate & BUTTON1_CLICKED )
+            {
+               y = event.y;
+               x = event.x;
+            }
+         }
+      }
+      else if ( c == 27 )
+      {
+         break;
+      }
+
+      win_update( );
+   }
+
+   return 0;
 }
 
 
 int main( int argc, char *argv[] )
 {
-
    win_startup( );
 
-   win_update( );
-   sleep( 5 );
-//   while ( 1 )
-//   {
-//
-//   }
+   game_loop( );
 
    win_shutdown( );
 
