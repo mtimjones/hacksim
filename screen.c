@@ -11,11 +11,11 @@
 static WINDOW *mainwin;
 static MEVENT event;
 int x=0, y=0;
+int offsety, offsetx;
 
 
 void win_startup( void )
 {
-   int offsety, offsetx;
 
    initscr( );
    cbreak( );
@@ -91,8 +91,8 @@ int game_loop( void )
          {
             if ( event.bstate & BUTTON1_CLICKED )
             {
-               y = event.y;
-               x = event.x;
+               y = event.y - offsety;
+               x = event.x - offsetx;
             }
          }
       }
