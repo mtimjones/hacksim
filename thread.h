@@ -1,5 +1,8 @@
 // thread.h
 
+#ifndef __THREAD_H__
+#define __THREAD_H__
+
 typedef struct thread_s thread_t;
 
 typedef enum
@@ -78,4 +81,4 @@ struct thread_s {
 thread_t *thread_create( void );
 void      thread_destroy( thread_t * );
 
-
+#endif // __THREAD_H__

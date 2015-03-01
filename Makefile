@@ -8,7 +8,7 @@ OBJ = main.c thread.c display.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 hacksim: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS)
+	gcc -o $@ $^ $(CFLAGS) `sdl2-config --cflags --libs`
 
 clean:
 	rm -f hacksim

@@ -61,3 +61,13 @@ int main ( int argc, char *argv[] )
    return 0;
 }
 
+
+// Game Loop
+
+// Pre-game, show environment, user defines avatar's program.
+
+// Start-game, interpret each of the entities
+
+//    Iterate entities to interp
+//    Iterate entities to check for collision
+//    Draw environment
