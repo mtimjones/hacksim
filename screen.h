@@ -26,6 +26,7 @@ typedef enum
    INSTR16,
    ACTION_RUN,
    ACTION_RESET,
+   ACTION_HELP,
    ACTION_EXIT,
    NUM_1,
    NUM_2,

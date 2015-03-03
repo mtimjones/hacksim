@@ -6,13 +6,25 @@
 #include <sys/time.h>
 #include "screen.h"
 
-#define NLINES          32
+#define NLINES          33
 #define NCOLS           70
 
 static WINDOW *mainwin;
 static MEVENT event;
 int x=0, y=0;
 int offsety, offsetx;
+
+
+static int helpindex = 0;
+
+char *help[5]= {
+"Welcome.  Continue to click Help for more help.           ",
+"Develop a program to guide your avatar to the shown goals.",
+"Commands: Run your program, Reset the env, Exit the sim.  ",
+"Click a location, and then an instruction to load it.     ",
+"Some instructions require another location or number.     ",
+};
+
 
 typedef struct
 {
@@ -24,8 +36,49 @@ typedef struct
 
 area Areas[] = 
 {
-   [ ACTION_EXIT ] = { 26, 26, 29 },
+   [ ACTION_RUN   ] = { 25, 26, 28 },
+   [ ACTION_EXIT  ] = { 26, 26, 29 },
+   [ ACTION_RESET ] = { 25, 31, 35 },
+   [ ACTION_HELP  ] = { 26, 31, 34 },
+   [ INSTR00      ] = {  5, 51, 60 },
+   [ INSTR01      ] = {  6, 51, 60 },
+   [ INSTR02      ] = {  7, 51, 60 },
+   [ INSTR03      ] = {  8, 51, 60 },
+   [ INSTR04      ] = {  9, 51, 60 },
+   [ INSTR05      ] = { 10, 51, 60 },
+   [ INSTR06      ] = { 11, 51, 60 },
+   [ INSTR07      ] = { 12, 51, 60 },
+   [ INSTR08      ] = { 13, 51, 60 },
+   [ INSTR09      ] = { 14, 51, 60 },
+   [ INSTR10      ] = { 15, 51, 60 },
+   [ INSTR11      ] = { 16, 51, 60 },
+   [ INSTR12      ] = { 17, 51, 60 },
+   [ INSTR13      ] = { 18, 51, 60 },
+   [ INSTR14      ] = { 19, 51, 60 },
+   [ INSTR15      ] = { 20, 51, 60 },
+   [ INSTR16      ] = { 21, 51, 60 },
+   [ INSTR_INCX   ] = { 25, 51, 54 },
+   [ INSTR_DECX   ] = { 26, 51, 54 },
+   [ INSTR_JUMP   ] = { 27, 51, 54 },
+   [ INSTR_INCY   ] = { 25, 56, 59 },
+   [ INSTR_DECY   ] = { 26, 56, 59 },
+   [ INSTR_BXNE   ] = { 27, 56, 59 },
+   [ INSTR_SWAP   ] = { 25, 61, 65 },
+   [ INSTR_NOP    ] = { 26, 61, 65 },
+   [ INSTR_BYNE   ] = { 27, 61, 65 },
+   [ NUM_1        ] = { 25, 41, 41 },
+   [ NUM_2        ] = { 25, 43, 43 },
+   [ NUM_3        ] = { 25, 45, 45 },
+   [ NUM_4        ] = { 26, 41, 41 },
+   [ NUM_5        ] = { 26, 43, 43 },
+   [ NUM_6        ] = { 26, 45, 45 },
+   [ NUM_7        ] = { 27, 41, 41 },
+   [ NUM_8        ] = { 27, 43, 43 },
+   [ NUM_9        ] = { 27, 45, 45 },
+   [ NUM_0        ] = { 28, 43, 43 },
+
 };
+
 
 
 int determine_screen_region( int x, int y )
@@ -124,7 +177,7 @@ void win_update( void )
    mvwprintw( mainwin, 25,  6, "X:      PC:" );
    mvwprintw( mainwin, 26,  6, "Y:      CYC:" );
    mvwprintw( mainwin, 25, 26, "Run  Reset" );
-   mvwprintw( mainwin, 26, 26, "Exit" );
+   mvwprintw( mainwin, 26, 26, "Exit Help" );
    mvwprintw( mainwin, 25, 41, "1 2 3" );
    mvwprintw( mainwin, 26, 41, "4 5 6" );
    mvwprintw( mainwin, 27, 41, "7 8 9" );
@@ -132,6 +185,8 @@ void win_update( void )
    mvwprintw( mainwin, 25, 51, "INCX INCY SWAP" );
    mvwprintw( mainwin, 26, 51, "DECX DECY NOP" );
    mvwprintw( mainwin, 27, 51, "JUMP BXNE BYNE" );
+
+   mvwprintw( mainwin, 30,  6, help[ helpindex ] );
 
    wrefresh( mainwin );
 
@@ -159,6 +214,10 @@ int game_loop( void )
                selection = determine_screen_region( x, y );
 
                if ( selection == ACTION_EXIT ) break;
+               else if (selection == ACTION_HELP )
+               {
+                  if ( ++helpindex >= 5 ) helpindex = 0;
+               }
             }
          }
       }
