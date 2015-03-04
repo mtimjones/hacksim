@@ -3,11 +3,18 @@
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
 
+typedef enum
+{
+   INITIAL = 0,
+   INSTRUCTION = 1,
+   OPERAND = 2,
+   LOCATION = 3,
+} states;
+
 // Screen Regions
 typedef enum
 {
-   NONE=0,
-   INSTR00,
+   INSTR00=0,
    INSTR01,
    INSTR02,
    INSTR03,
@@ -47,6 +54,7 @@ typedef enum
    INSTR_JUMP,
    INSTR_BXNE,
    INSTR_BYNE,
+   NONE,
 } screen_regions;
 
 #endif // __SCREEN_H__

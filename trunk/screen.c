@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include "screen.h"
 
-#define NLINES          33
+#define NLINES          34
 #define NCOLS           70
 
 static WINDOW *mainwin;
@@ -16,15 +16,21 @@ int offsety, offsetx;
 
 
 static int helpindex = 0;
+static int contexthelpindex = 0;
 
-char *help[5]= {
+char *help[5] = {
 "Welcome.  Continue to click Help for more help.           ",
 "Develop a program to guide your avatar to the shown goals.",
 "Commands: Run your program, Reset the env, Exit the sim.  ",
 "Click a location, and then an instruction to load it.     ",
-"Some instructions require another location or number.     ",
 };
 
+char *contexthelp[4] = {
+"                                                          ",
+"Now select an instruction for that location.              ",
+"For this instruction, select a number for the operand.    ",
+"For this instruction, select another branch location.     ",
+};
 
 typedef struct
 {
@@ -182,11 +188,19 @@ void win_update( void )
    mvwprintw( mainwin, 26, 41, "4 5 6" );
    mvwprintw( mainwin, 27, 41, "7 8 9" );
    mvwprintw( mainwin, 28, 41, "  0  " );
-   mvwprintw( mainwin, 25, 51, "INCX INCY SWAP" );
-   mvwprintw( mainwin, 26, 51, "DECX DECY NOP" );
-   mvwprintw( mainwin, 27, 51, "JUMP BXNE BYNE" );
+   mvwprintw( mainwin, 25, 51, "INCX" );
+   mvwprintw( mainwin, 25, 56, "INCY" );
+   mvwprintw( mainwin, 25, 61, "SWAP" );
+   mvwprintw( mainwin, 26, 51, "DECX" );
+   mvwprintw( mainwin, 26, 56, "DECY" );
+   mvwprintw( mainwin, 26, 61, "NOP" );
+   mvwprintw( mainwin, 27, 51, "JUMP" );
+   mvwprintw( mainwin, 27, 56, "BXNE" );
+   mvwprintw( mainwin, 27, 61, "BYNE" );
 
    mvwprintw( mainwin, 30,  6, help[ helpindex ] );
+
+   mvwprintw( mainwin, 31,  6, contexthelp[ contexthelpindex ] );
 
    wrefresh( mainwin );
 
@@ -198,6 +212,11 @@ int game_loop( void )
 {
    int c;
    int selection;
+   states state = INITIAL;
+   int selected_location;
+   int selected_target_location;
+
+   // Load environment (entities)
 
    while ( 1 )
    {
@@ -213,10 +232,30 @@ int game_loop( void )
                x = event.x - offsetx;
                selection = determine_screen_region( x, y );
 
-               if ( selection == ACTION_EXIT ) break;
-               else if (selection == ACTION_HELP )
+               if ( selection == ACTION_EXIT )
                {
-                  if ( ++helpindex >= 5 ) helpindex = 0;
+                  break;
+               }
+               else if ( selection == ACTION_HELP )
+               {
+                  if ( ++helpindex >= 4 ) helpindex = 0;
+               }
+               else if ( selection == ACTION_RUN )
+               {
+               }
+               else if ( selection == ACTION_RESET )
+               {
+               }
+               else if ( selection >= INSTR00 && selection <= INSTR16 )
+               {
+                  if ( state == INITIAL )
+                  {
+                     selected_location = selection;
+                     contexthelpindex = 1;
+                  }
+                  else if ( state == LOCATION )
+                  {
+                  }
                }
             }
          }
