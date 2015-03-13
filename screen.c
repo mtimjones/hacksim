@@ -1,4 +1,5 @@
 // screen.c
+// mtj@mtjones.com
 
 #include <stdio.h>
 #include <curses.h>
